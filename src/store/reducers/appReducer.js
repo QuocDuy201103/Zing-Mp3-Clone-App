@@ -1,8 +1,9 @@
 import actionTypes from "../actions/actionTypes";
 
 const initState = {
-    homeData: [],
-    test: 'Hello'
+    banner: [],
+    
+    
 }
 
 const appReducer = (state = initState, action) =>{
@@ -10,7 +11,10 @@ const appReducer = (state = initState, action) =>{
     // action: post from view
     switch (action.type) {
         case actionTypes.GET_HOME:
-            return state
+            return {
+                ...state,
+                banner: action.homeData?.find(item => item.sectionType === 'banner')?.items || null
+            }
             
     
         default:
