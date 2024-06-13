@@ -1,4 +1,4 @@
-export const getArrSlider = (start, end, number)=>{
+ export const getArrSlider = (start, end, number)=>{
     const limit = start > end ? number : end
     let output = []
     for (let i = start; i <= limit; i++) {
@@ -12,5 +12,4 @@ export const getArrSlider = (start, end, number)=>{
     return output
 } 
 
-console.log(getArrSlider(3,1,3));
 
