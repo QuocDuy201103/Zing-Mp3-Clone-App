@@ -9,7 +9,7 @@ const Slider = () => {
     const { banner } = useSelector(state => state.app)
     //define postman (dispatch)
     const dispatch = useDispatch()
-    // const navigate = useNavigate()
+    const navigate = useNavigate()
 
 
     // ainimation for banner
@@ -56,11 +56,11 @@ const Slider = () => {
             dispatch(actions.setCurSongId(item.encodeId))
             dispatch(actions.play(true))
         } 
-        // else if (item?.type === 4) {
-        //     const albumPath = item?.link?.split('.')[0]
-        //     navigate(albumPath)
-        // }
-        console.log(item);
+        else if (item?.type === 4) {
+            const albumPath = item?.link?.split('.')[0]
+            navigate(albumPath)
+            // console.log(albumPath);
+        }
     }
 
     return (

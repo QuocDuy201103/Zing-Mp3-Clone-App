@@ -6,7 +6,7 @@ const Header = () => {
   return (
     <div className='flex justify-between w-full items-center'>
       <div className='flex gap-6 w-full items-center'>
-        <div className='flex gap-6 text-[#b5bfc1]'>
+        <div className='flex gap-6 text-[#3e4242]'>
           <span>
             <IoIosArrowRoundBack size={24}/>
           </span>
