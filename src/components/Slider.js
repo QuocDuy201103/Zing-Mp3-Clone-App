@@ -54,7 +54,7 @@ const Slider = () => {
         //setCurSongId in Redux
         if (item?.type === 1) {
             dispatch(actions.setCurSongId(item.encodeId))
-            // dispatch(actions.play(true))
+            dispatch(actions.play(true))
         } 
         // else if (item?.type === 4) {
         //     const albumPath = item?.link?.split('.')[0]

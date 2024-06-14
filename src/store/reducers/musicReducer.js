@@ -2,9 +2,10 @@ import actionTypes from "../actions/actionTypes";
 
 const initState = {
     curSongId: null,
+    isPlaying: false
 }
 
-const musicReducer = (state = initState, action) =>{
+const musicReducer = (state = initState, action) => {
     //type: name action
     // action: post from view
     switch (action.type) {
@@ -12,6 +13,11 @@ const musicReducer = (state = initState, action) =>{
             return {
                 ...state,
                 curSongId: action.songId || null
+            }
+        case actionTypes.PLAY:
+            return {
+                ...state,
+                isPlaying: action.flag
             }
 
         default:
