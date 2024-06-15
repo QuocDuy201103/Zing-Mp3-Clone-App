@@ -1,17 +1,15 @@
 import { MdOutlineLibraryMusic } from "react-icons/md";
-import { RiCompassDiscoverFill } from "react-icons/ri";
-import { RiBarChartBoxFill } from "react-icons/ri";
+import { RiCompassDiscoverFill, RiBarChartBoxFill } from "react-icons/ri";
 import { SlUserFollow } from "react-icons/sl";
-import { IoIosArrowRoundBack, IoIosArrowRoundForward, IoIosHeartEmpty, IoIosPlay } from "react-icons/io";
-import { IoMdHeart } from "react-icons/io";
+import { IoIosArrowRoundBack, IoIosArrowRoundForward, IoIosHeartEmpty, IoIosPlay, IoMdHeart } from "react-icons/io";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { GoSearch, GoHeart } from "react-icons/go";
 import { LuShuffle } from "react-icons/lu";
 import { MdSkipNext, MdSkipPrevious } from "react-icons/md";
 import { IoPlayCircleOutline, IoPauseCircleOutline } from "react-icons/io5";
 import { CiRepeat } from "react-icons/ci";
-import { PiShuffleThin } from "react-icons/pi";
-import { PiPlayFill, PiPauseFill } from "react-icons/pi";
+import { PiShuffleThin, PiPlayFill, PiPauseFill, PiMusicNotesSimpleThin, PiSortAscendingFill, PiSortAscendingThin } from "react-icons/pi";
+
 
 const icons = {
     MdOutlineLibraryMusic,
@@ -34,7 +32,10 @@ const icons = {
     IoIosPlay,
     PiShuffleThin,
     PiPlayFill,
-    PiPauseFill
+    PiPauseFill,
+    PiMusicNotesSimpleThin,
+    PiSortAscendingFill,
+    PiSortAscendingThin
 }
 
 export default icons

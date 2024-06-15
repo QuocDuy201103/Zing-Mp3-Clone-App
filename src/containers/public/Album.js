@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import * as apis from '../../apis'
 import moment from 'moment'
+import { Lists } from '../../components'
 
 const Album = () => {
 
@@ -42,8 +43,12 @@ const Album = () => {
                     </span>
                 </div>
             </div>
-            <div className='flex-auto border border-blue-500'>
-                playlist
+            <div className='flex-auto border border-blue-500 overflow-scroll'>
+                <span className='flex gap-1 text-sm'>
+                    <span className='text-gray-600'>Lời tựa</span>
+                    <span>{playlistData?.description}</span>
+                </span>
+                <Lists songs={playlistData?.song?.items} totalDuration={playlistData?.song?.totalDuration}/>
             </div>
         </div>
     )
