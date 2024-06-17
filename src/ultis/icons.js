@@ -9,6 +9,7 @@ import { MdSkipNext, MdSkipPrevious } from "react-icons/md";
 import { IoPlayCircleOutline, IoPauseCircleOutline } from "react-icons/io5";
 import { CiRepeat } from "react-icons/ci";
 import { PiShuffleThin, PiPlayFill, PiPauseFill, PiMusicNotesSimpleThin, PiSortAscendingFill, PiSortAscendingThin } from "react-icons/pi";
+import { BsDot } from "react-icons/bs";
 
 
 const icons = {
@@ -35,7 +36,8 @@ const icons = {
     PiPauseFill,
     PiMusicNotesSimpleThin,
     PiSortAscendingFill,
-    PiSortAscendingThin
+    PiSortAscendingThin,
+    BsDot
 }
 
 export default icons

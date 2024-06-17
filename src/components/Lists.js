@@ -1,11 +1,12 @@
 import React, { memo } from 'react'
 import List from './List';
 import icons from '../ultis/icons';
+import moment from 'moment';
 
-const { PiSortAscendingFill, PiSortAscendingThin } = icons
+const { PiSortAscendingFill, PiSortAscendingThin, BsDot } = icons
 
 const Lists = ({ songs, totalDuration }) => {
-  console.log({ songs, totalDuration });
+  // console.log({ songs, totalDuration });
   return (
     <div className='w-full flex flex-col text-gray-600'>
       <div className=' flex justify-between items-center text-xs font-semibold p-[10px]'>
@@ -21,6 +22,11 @@ const Lists = ({ songs, totalDuration }) => {
           <List key={item.encodeId} songData={item} />
         ))}
       </div>
+      <span className='flex gap-1 items-center text-[13px] py-[10px] border-t border-[#c3cece]'>
+        <span>{`${songs?.length} bài hát`}</span>
+        <span><BsDot size={20}/></span>
+        <span>{moment.utc(totalDuration*1000).format('HH:mm:ss')}</span>
+      </span>
     </div>
   )
 }

@@ -1,18 +1,20 @@
-import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import React, { useEffect, useState, useRef } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import * as apis from '../apis'
 import icons from '../ultis/icons'
+import * as actions from '../store/actions'
+import moment from 'moment'
 
-const { GoHeart, IoMdHeart, HiOutlineDotsHorizontal, PiShuffleThin, MdSkipNext, MdSkipPrevious, PiPlayFill, PiPauseFill, CiRepeat } = icons
 
+const { GoHeart, HiOutlineDotsHorizontal, PiShuffleThin, MdSkipNext, MdSkipPrevious, PiPlayFill, PiPauseFill, CiRepeat } = icons
+var intervalId
 const Player = () => {
-    const audioElement = new Audio('')
     const { curSongId, isPlaying } = useSelector(state => state.music)
     const [songInfo, setSongInfo] = useState(null)
-    const [source, setSource] = useState(null)
-    // const [isPlaying, setIsPlaying] = useState(false)
-    // console.log(isPlaying);
-    // console.log(audioElement);
+    const [audio, setAudio] = useState(new Audio())
+    const [curSeconds, SetCurSeconds] = useState(0)
+    const dispatch = useDispatch()
+    const thumbRef = useRef()
 
     useEffect(() => {
         const fetchDetailSong = async () => {
@@ -25,22 +27,39 @@ const Player = () => {
                 setSongInfo(res1.data.data)
             }
             if (res2.data.err === 0) {
-                setSource(res2.data.data['128'])
+                audio.pause()
+                setAudio(new Audio(res2.data.data['128']))
             }
         }
-
-
         fetchDetailSong()
     }, [curSongId])
 
-    const handleTogglePlayMusic = () => {
-        // setIsPlaying(prev => !prev)
-    }
+    useEffect(() => {
+        if (isPlaying) {
+            intervalId = setInterval(() => {
+                let percentOfProgBar = Math.round(audio.currentTime * 10000 / songInfo.duration) / 100
+                thumbRef.current.style.cssText = `right: ${100 - percentOfProgBar}%`
+                SetCurSeconds(Math.round(audio.currentTime))
+            }, 10)
+        } else {
+            intervalId && clearInterval(intervalId)
+        }
+    }, [isPlaying])
 
     useEffect(() => {
-        // audioElement.play()
-    }, [curSongId])
+        audio.load()
+        if (isPlaying) audio.play()
+    }, [audio])
 
+    const handleTogglePlayMusic = async () => {
+        if (isPlaying) {
+            audio.pause()
+            dispatch(actions.play(false))
+        } else {
+            audio.play()
+            dispatch(actions.play(true))
+        }
+    }
     return (
         <div className='bg-main-400 px-5 h-full flex cursor-pointer'>
             <div className='w-[30%] flex-auto flex items-center gap-3'>
@@ -66,14 +85,17 @@ const Player = () => {
                         className='p-2 border border-gray-600 hover:text-main-500 rounded-full'
                         onClick={handleTogglePlayMusic}
                     >
-
                         {isPlaying ? <PiPauseFill size={24} /> : <PiPlayFill size={24} />}
                     </span>
                     <span><MdSkipNext size={24} /></span>
                     <span title='Bật phát lại tất cả'><CiRepeat size={24} /></span>
                 </div>
-                <div>
-                    progress bar
+                <div className='flex w-full items-center justify-center text-xs'>
+                    <span className='mr-[10px]'>{moment.utc(curSeconds * 1000).format('mm:ss')}</span>
+                    <div className='w-full h-[3px] bg-[rgba(0,0,0,0.1)] m-auto relative rounded-l-full rounded-r-full'>
+                        <div ref={thumbRef} className='absolute top-0 left-0 h-[3px] bg-[#0e8080] rounded-l-full rounded-r-full'></div>
+                    </div>
+                    <span className='ml-[10px]'>{moment.utc((songInfo?.duration)*1000).format('mm:ss')}</span>
                 </div>
             </div>
             <div className='w-[30%] flex-auto border border-red-500'>
