@@ -4,6 +4,7 @@ import * as apis from '../apis'
 import icons from '../ultis/icons'
 import * as actions from '../store/actions'
 import moment from 'moment'
+import { toast } from 'react-toastify'
 
 
 const { GoHeart, HiOutlineDotsHorizontal, PiShuffleThin, MdSkipNext, MdSkipPrevious, PiPlayFill, PiPauseFill, CiRepeat } = icons
@@ -12,9 +13,10 @@ const Player = () => {
     const { curSongId, isPlaying } = useSelector(state => state.music)
     const [songInfo, setSongInfo] = useState(null)
     const [audio, setAudio] = useState(new Audio())
-    const [curSeconds, SetCurSeconds] = useState(0)
+    const [curSeconds, setCurSeconds] = useState(0)
     const dispatch = useDispatch()
     const thumbRef = useRef()
+    const trackRef = useRef()
 
     useEffect(() => {
         const fetchDetailSong = async () => {
@@ -29,27 +31,33 @@ const Player = () => {
             if (res2.data.err === 0) {
                 audio.pause()
                 setAudio(new Audio(res2.data.data['128']))
+            } else {
+                setAudio(new Audio())
+                dispatch(actions.play(false))
+                toast.warn(res2.data.msg)
+                setCurSeconds(0)
+                audio.currentTime = 0
+                thumbRef.current.style.cssText = `right: 100%`
             }
         }
         fetchDetailSong()
     }, [curSongId])
 
+
     useEffect(() => {
+        intervalId && clearInterval(intervalId)
+        audio.pause()
+        audio.load()
         if (isPlaying) {
+            audio.play()
             intervalId = setInterval(() => {
                 let percentOfProgBar = Math.round(audio.currentTime * 10000 / songInfo.duration) / 100
                 thumbRef.current.style.cssText = `right: ${100 - percentOfProgBar}%`
-                SetCurSeconds(Math.round(audio.currentTime))
-            }, 10)
-        } else {
-            intervalId && clearInterval(intervalId)
+                setCurSeconds(Math.round(audio.currentTime))
+            }, 100)
         }
-    }, [isPlaying])
-
-    useEffect(() => {
-        audio.load()
-        if (isPlaying) audio.play()
     }, [audio])
+
 
     const handleTogglePlayMusic = async () => {
         if (isPlaying) {
@@ -60,6 +68,15 @@ const Player = () => {
             dispatch(actions.play(true))
         }
     }
+
+    const handleProgressBar = (e) => {
+        const trackRect = trackRef.current.getBoundingClientRect()
+        const percent = Math.round((e.clientX - trackRect.left) * 10000 / trackRect.width) / 100
+        thumbRef.current.style.cssText = `right: ${100 - percent}%`
+        audio.currentTime = (percent * songInfo.duration) / 100
+        setCurSeconds(Math.round(percent * songInfo.duration) / 100)
+    }
+
     return (
         <div className='bg-main-400 px-5 h-full flex cursor-pointer'>
             <div className='w-[30%] flex-auto flex items-center gap-3'>
@@ -92,10 +109,14 @@ const Player = () => {
                 </div>
                 <div className='flex w-full items-center justify-center text-xs'>
                     <span className='mr-[10px]'>{moment.utc(curSeconds * 1000).format('mm:ss')}</span>
-                    <div className='w-full h-[3px] bg-[rgba(0,0,0,0.1)] m-auto relative rounded-l-full rounded-r-full'>
-                        <div ref={thumbRef} className='absolute top-0 left-0 h-[3px] bg-[#0e8080] rounded-l-full rounded-r-full'></div>
+                    <div
+                        ref={trackRef}
+                        className='w-full h-[3px] hover:h-[6px] bg-[rgba(0,0,0,0.1)] m-auto relative rounded-l-full rounded-r-full cursor-pointer'
+                        onClick={handleProgressBar}
+                    >
+                        <div ref={thumbRef} className='absolute top-0 left-0 h-full bg-[#0e8080] rounded-l-full rounded-r-full'></div>
                     </div>
-                    <span className='ml-[10px]'>{moment.utc((songInfo?.duration)*1000).format('mm:ss')}</span>
+                    <span className='ml-[10px]'>{moment.utc((songInfo?.duration) * 1000).format('mm:ss')}</span>
                 </div>
             </div>
             <div className='w-[30%] flex-auto border border-red-500'>
