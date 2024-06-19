@@ -10,10 +10,11 @@ import { toast } from 'react-toastify'
 const { GoHeart, HiOutlineDotsHorizontal, PiShuffleThin, MdSkipNext, MdSkipPrevious, PiPlayFill, PiPauseFill, CiRepeat } = icons
 var intervalId
 const Player = () => {
-    const { curSongId, isPlaying } = useSelector(state => state.music)
+    const { curSongId, isPlaying, songs } = useSelector(state => state.music)
     const [songInfo, setSongInfo] = useState(null)
     const [audio, setAudio] = useState(new Audio())
     const [curSeconds, setCurSeconds] = useState(0)
+    const [isShuffle, setIsShuffle] = useState(false)
     const dispatch = useDispatch()
     const thumbRef = useRef()
     const trackRef = useRef()
@@ -32,11 +33,12 @@ const Player = () => {
                 audio.pause()
                 setAudio(new Audio(res2.data.data['128']))
             } else {
+                audio.pause()
                 setAudio(new Audio())
                 dispatch(actions.play(false))
                 toast.warn(res2.data.msg)
                 setCurSeconds(0)
-                audio.currentTime = 0
+                // audio.currentTime = 0
                 thumbRef.current.style.cssText = `right: 100%`
             }
         }
@@ -77,8 +79,34 @@ const Player = () => {
         setCurSeconds(Math.round(percent * songInfo.duration) / 100)
     }
 
+    const handleNextSong = () => {
+        if (songs) {
+            let curSongIndex
+            songs?.forEach((item, index) => {
+                if (item.encodeId === curSongId) curSongIndex = index
+            })
+            dispatch(actions.setCurSongId(songs[curSongIndex + 1].encodeId))
+            dispatch(actions.play(true))
+        }
+    }
+    const handlePrevSong = () => {
+        if (songs) {
+            let curSongIndex
+            songs?.forEach((item, index) => {
+                if (item.encodeId === curSongId) curSongIndex = index
+            })
+            dispatch(actions.setCurSongId(songs[curSongIndex - 1].encodeId))
+            dispatch(actions.play(true))
+        }
+    }
+
+    // const handleShuffle = () => {
+
+    // }
+
+
     return (
-        <div className='bg-main-400 px-5 h-full flex cursor-pointer'>
+        <div className='bg-main-400 px-5 h-full flex'>
             <div className='w-[30%] flex-auto flex items-center gap-3'>
                 <img src={songInfo?.thumbnail} alt='thumbnail' className='w-16 h-16 object-cover rounded-md' />
                 <div className='flex flex-col'>
@@ -96,16 +124,30 @@ const Player = () => {
             </div>
             <div className='w-[40%] flex-auto flex items-center justify-center flex-col border border-red-500 gap-2 py-2 '>
                 <div className='flex gap-8 justify-center items-center '>
-                    <span title='Bật phát ngẫu nhiên'><PiShuffleThin size={24} /></span>
-                    <span><MdSkipPrevious size={24} /></span>
                     <span
-                        className='p-2 border border-gray-600 hover:text-main-500 rounded-full'
+                        className={`cursor-pointer ${isShuffle && 'text-main-500'}`} title='Bật phát ngẫu nhiên'
+                        onClick={() => setIsShuffle(prev => !prev)}
+                    >
+                        <PiShuffleThin size={24} />
+                    </span>
+                    <span
+                        onClick={handlePrevSong}
+                        className={`${!songs ? 'cursor-not-allowed text-gray-500' : 'cursor-pointer'}`}>
+                        <MdSkipPrevious size={24} />
+                    </span>
+                    <span
+                        className='p-2 border border-gray-600 hover:text-main-500 rounded-full cursor-pointer'
                         onClick={handleTogglePlayMusic}
                     >
                         {isPlaying ? <PiPauseFill size={24} /> : <PiPlayFill size={24} />}
                     </span>
-                    <span><MdSkipNext size={24} /></span>
-                    <span title='Bật phát lại tất cả'><CiRepeat size={24} /></span>
+                    <span
+                        onClick={handleNextSong}
+                        className={`${!songs ? 'cursor-not-allowed text-gray-500' : 'cursor-pointer'}`}>
+                        <MdSkipNext size={24} />
+                    </span>
+
+                    <span className='cursor-pointer' title='Bật phát lại tất cả'><CiRepeat size={24} /></span>
                 </div>
                 <div className='flex w-full items-center justify-center text-xs'>
                     <span className='mr-[10px]'>{moment.utc(curSeconds * 1000).format('mm:ss')}</span>
