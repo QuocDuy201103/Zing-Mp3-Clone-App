@@ -100,9 +100,12 @@ const Player = () => {
         }
     }
 
-    // const handleShuffle = () => {
-
-    // }
+    const handleShuffle = () => {
+        const randomIndex = Math.round(Math.random() * songs?.length) -1 
+        dispatch(actions.setCurSongId(songs[randomIndex].encodeId))
+        dispatch(actions.play(true))
+        setIsShuffle(prev => !prev)
+    }
 
 
     return (
@@ -126,7 +129,7 @@ const Player = () => {
                 <div className='flex gap-8 justify-center items-center '>
                     <span
                         className={`cursor-pointer ${isShuffle && 'text-main-500'}`} title='Bật phát ngẫu nhiên'
-                        onClick={() => setIsShuffle(prev => !prev)}
+                        onClick={handleShuffle}
                     >
                         <PiShuffleThin size={24} />
                     </span>

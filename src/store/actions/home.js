@@ -8,7 +8,6 @@ export const getHome = () => async (dispatch) =>{
             dispatch({
                 type: actionTypes.GET_HOME,
                 homeData: response.data.data.items
-                
             })
         } else {
             dispatch({

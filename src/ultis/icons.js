@@ -3,7 +3,7 @@ import { RiCompassDiscoverFill, RiBarChartBoxFill } from "react-icons/ri";
 import { SlUserFollow } from "react-icons/sl";
 import { IoIosArrowRoundBack, IoIosArrowRoundForward, IoIosHeartEmpty, IoIosPlay, IoMdHeart } from "react-icons/io";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
-import { GoSearch, GoHeart } from "react-icons/go";
+import { GoSearch, GoHeart, GoChevronRight } from "react-icons/go";
 import { LuShuffle } from "react-icons/lu";
 import { MdSkipNext, MdSkipPrevious } from "react-icons/md";
 import { IoPlayCircleOutline, IoPauseCircleOutline } from "react-icons/io5";
@@ -22,8 +22,9 @@ const icons = {
     IoIosHeartEmpty,
     IoMdHeart,
     GoSearch,
-    HiOutlineDotsHorizontal,
     GoHeart,
+    GoChevronRight,
+    HiOutlineDotsHorizontal,
     LuShuffle,
     MdSkipNext,
     MdSkipPrevious,
