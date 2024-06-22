@@ -8,7 +8,7 @@ import { LuShuffle } from "react-icons/lu";
 import { MdSkipNext, MdSkipPrevious } from "react-icons/md";
 import { IoPlayCircleOutline, IoPauseCircleOutline } from "react-icons/io5";
 import { CiRepeat } from "react-icons/ci";
-import { PiShuffleThin, PiPlayFill, PiPauseFill, PiMusicNotesSimpleThin, PiSortAscendingFill, PiSortAscendingThin } from "react-icons/pi";
+import { PiShuffleThin, PiPlayFill, PiPauseFill, PiMusicNotesSimpleThin, PiSortAscendingFill, PiSortAscendingThin, PiRepeatThin, PiRepeatOnceThin  } from "react-icons/pi";
 import { BsDot } from "react-icons/bs";
 
 
@@ -38,6 +38,8 @@ const icons = {
     PiMusicNotesSimpleThin,
     PiSortAscendingFill,
     PiSortAscendingThin,
+    PiRepeatThin,
+    PiRepeatOnceThin,
     BsDot
 }
 

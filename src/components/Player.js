@@ -7,7 +7,7 @@ import moment from 'moment'
 import { toast } from 'react-toastify'
 
 
-const { GoHeart, HiOutlineDotsHorizontal, PiShuffleThin, MdSkipNext, MdSkipPrevious, PiPlayFill, PiPauseFill, CiRepeat } = icons
+const { GoHeart, HiOutlineDotsHorizontal, PiShuffleThin, MdSkipNext, MdSkipPrevious, PiPlayFill, PiPauseFill, PiRepeatThin, PiRepeatOnceThin } = icons
 var intervalId
 const Player = () => {
     const { curSongId, isPlaying, songs } = useSelector(state => state.music)
@@ -15,6 +15,7 @@ const Player = () => {
     const [audio, setAudio] = useState(new Audio())
     const [curSeconds, setCurSeconds] = useState(0)
     const [isShuffle, setIsShuffle] = useState(false)
+    const [repeatMode, setRepeatMode] = useState(0)
     const dispatch = useDispatch()
     const thumbRef = useRef()
     const trackRef = useRef()
@@ -50,7 +51,7 @@ const Player = () => {
         intervalId && clearInterval(intervalId)
         audio.pause()
         audio.load()
-        if (isPlaying) {
+        if (isPlaying && thumbRef.current) {
             audio.play()
             intervalId = setInterval(() => {
                 let percentOfProgBar = Math.round(audio.currentTime * 10000 / songInfo.duration) / 100
@@ -60,6 +61,26 @@ const Player = () => {
         }
     }, [audio])
 
+    useEffect(() => {
+        const handleEnded = () => {
+            console.log(isShuffle);
+            if (isShuffle) {
+                handleShuffle()
+            } else if (repeatMode) {
+                repeatMode === 1 ? handleRepeatOne() : handleNextSong()
+            } else {
+                audio.pause()
+                dispatch(actions.play(false))
+            }
+        }
+        audio.addEventListener('ended', handleEnded)
+
+        return () => {
+            audio.addEventListener('ended', handleEnded)
+        }
+
+    }, [audio, isShuffle, repeatMode]
+    )
 
     const handleTogglePlayMusic = async () => {
         if (isPlaying) {
@@ -101,10 +122,13 @@ const Player = () => {
     }
 
     const handleShuffle = () => {
-        const randomIndex = Math.round(Math.random() * songs?.length) -1 
+        const randomIndex = Math.round(Math.random() * songs?.length) - 1
         dispatch(actions.setCurSongId(songs[randomIndex].encodeId))
         dispatch(actions.play(true))
-        setIsShuffle(prev => !prev)
+    }
+
+    const handleRepeatOne = () => {
+        audio.play()
     }
 
 
@@ -128,8 +152,9 @@ const Player = () => {
             <div className='w-[40%] flex-auto flex items-center justify-center flex-col border border-red-500 gap-2 py-2 '>
                 <div className='flex gap-8 justify-center items-center '>
                     <span
-                        className={`cursor-pointer ${isShuffle && 'text-main-500'}`} title='Bật phát ngẫu nhiên'
-                        onClick={handleShuffle}
+                        className={`cursor-pointer ${isShuffle ? 'text-main-500' : 'text-[#404848]'}`}
+                        title='Bật phát ngẫu nhiên'
+                        onClick={() => setIsShuffle(prev => !prev)}
                     >
                         <PiShuffleThin size={24} />
                     </span>
@@ -150,7 +175,14 @@ const Player = () => {
                         <MdSkipNext size={24} />
                     </span>
 
-                    <span className='cursor-pointer' title='Bật phát lại tất cả'><CiRepeat size={24} /></span>
+                    <span
+                        className={`cursor-pointer ${repeatMode ? 'text-main-500' : 'text-[#404848]'}`}
+                        title='Bật phát lại tất cả'
+                        onClick={() => setRepeatMode(prev => prev === 2 ? 0 : prev + 1)}
+                    >
+                        {repeatMode === 1 ? <PiRepeatOnceThin size={24} /> : <PiRepeatThin  size={24} />}
+
+                    </span>
                 </div>
                 <div className='flex w-full items-center justify-center text-xs'>
                     <span className='mr-[10px]'>{moment.utc(curSeconds * 1000).format('mm:ss')}</span>
