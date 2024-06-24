@@ -5,27 +5,45 @@ import icons from '../ultis/icons'
 import * as actions from '../store/actions'
 import moment from 'moment'
 import { toast } from 'react-toastify'
+import LoadingSong from './LoadingSong'
 
 
-const { GoHeart, HiOutlineDotsHorizontal, PiShuffleThin, MdSkipNext, MdSkipPrevious, PiPlayFill, PiPauseFill, PiRepeatThin, PiRepeatOnceThin } = icons
+const { GoHeart,
+    HiOutlineDotsHorizontal,
+    PiShuffleThin,
+    MdSkipNext,
+    MdSkipPrevious,
+    PiPlayFill,
+    PiPauseFill,
+    PiRepeatThin,
+    PiRepeatOnceThin,
+    RiPlayListLine,
+    CiVolumeHigh,
+    CiVolumeMute,
+    CiVolume } = icons
 var intervalId
-const Player = () => {
+const Player = ({ setIsShowRightSideBar }) => {
     const { curSongId, isPlaying, songs } = useSelector(state => state.music)
     const [songInfo, setSongInfo] = useState(null)
     const [audio, setAudio] = useState(new Audio())
     const [curSeconds, setCurSeconds] = useState(0)
     const [isShuffle, setIsShuffle] = useState(false)
     const [repeatMode, setRepeatMode] = useState(0)
+    const [isLoadedSource, setIsLoadedSource] = useState(true)
+    const [volume, setVolume] = useState(100)
+
     const dispatch = useDispatch()
     const thumbRef = useRef()
     const trackRef = useRef()
 
     useEffect(() => {
         const fetchDetailSong = async () => {
+            setIsLoadedSource(false)
             const [res1, res2] = await Promise.all([
                 apis.apiGetDetailSong(curSongId),
                 apis.apiGetSong(curSongId)
             ])
+            setIsLoadedSource(true)
 
             if (res1.data.err === 0) {
                 setSongInfo(res1.data.data)
@@ -80,6 +98,11 @@ const Player = () => {
         }
 
     }, [audio, isShuffle, repeatMode]
+    )
+
+    useEffect(() => {
+        audio.volume = volume / 100
+    }, [volume]
     )
 
     const handleTogglePlayMusic = async () => {
@@ -167,7 +190,7 @@ const Player = () => {
                         className='p-2 border border-gray-600 hover:text-main-500 rounded-full cursor-pointer'
                         onClick={handleTogglePlayMusic}
                     >
-                        {isPlaying ? <PiPauseFill size={24} /> : <PiPlayFill size={24} />}
+                        {!isLoadedSource ? <LoadingSong /> : isPlaying ? <PiPauseFill size={24} /> : <PiPlayFill size={24} />}
                     </span>
                     <span
                         onClick={handleNextSong}
@@ -180,7 +203,7 @@ const Player = () => {
                         title='Bật phát lại tất cả'
                         onClick={() => setRepeatMode(prev => prev === 2 ? 0 : prev + 1)}
                     >
-                        {repeatMode === 1 ? <PiRepeatOnceThin size={24} /> : <PiRepeatThin  size={24} />}
+                        {repeatMode === 1 ? <PiRepeatOnceThin size={24} /> : <PiRepeatThin size={24} />}
 
                     </span>
                 </div>
@@ -196,8 +219,30 @@ const Player = () => {
                     <span className='ml-[10px]'>{moment.utc((songInfo?.duration) * 1000).format('mm:ss')}</span>
                 </div>
             </div>
-            <div className='w-[30%] flex-auto border border-red-500'>
-                volume
+            <div className='w-[30%] flex-auto border border-red-500 flex gap-4 items-center justify-end '>
+                <div className='flex gap-2 items-center'>
+                    <span
+                        className='p-[5px]'
+                        onClick={() => setVolume(prev => +prev === 0 ? 70 : 0)}
+                    >
+                        {+volume >= 50 ? <CiVolumeHigh /> : +volume === 0 ? <CiVolumeMute /> : <CiVolume />}
+                    </span>
+                    <input
+                        className='w-[70px] h-1 cursor-pointer'
+                        type='range'
+                        step={1}
+                        min={0}
+                        max={100}
+                        value={volume}
+                        onChange={(e)=> setVolume(e.target.value)}
+                    />
+                </div>
+                <span
+                    className='p-[5px] h-[30px] w-[28px] rounded-md flex items-center justify-center text-white bg-main-500 hover:opacity-90 cursor-pointer'
+                    onClick={() => setIsShowRightSideBar(prev => !prev)}
+                >
+                    <RiPlayListLine size={16} />
+                </span>
             </div>
         </div>
     )
