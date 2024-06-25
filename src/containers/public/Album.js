@@ -13,24 +13,25 @@ const { PiPlayFill } = icons
 const Album = () => {
 
     const { pid } = useParams()
-    const { curSongId, isPlaying, songs } = useSelector(state => state.music)
+    const { isPlaying } = useSelector(state => state.music)
     const [playlistData, setPlaylistData] = useState({})
     const dispatch = useDispatch()
 
     useEffect(() => {
         const fetchDetailPlaylist = async () => {
+            dispatch(actions.loading(true))
             const res = await apis.apiGetDetailPlaylist(pid)
+            dispatch(actions.loading(false))
             if (res?.data.err === 0) {
                 setPlaylistData(res.data?.data)
                 dispatch(actions.setPlaylist(res?.data?.data?.song?.items))
             }
-            // console.log(res);
         }
         fetchDetailPlaylist()
     }, [pid])
 
     return (
-        <div className='flex gap-8 w-full h-full px-[59px]'>
+        <div className='flex relative gap-8 w-full h-full px-[59px]'>
             <div className='flex-none w-1/4 flex flex-col items-center gap-2'>
                 <div className='w-full relative overflow-hidden cursor-pointer'>
                     <img
